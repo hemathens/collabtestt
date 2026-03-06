@@ -1,68 +1,81 @@
-// Large file with many functions for complex conflicts
-const utils = {
-    version: '1.0.0',
-    
-    formatDate: function(date) {
-        return date.toISOString();
-    },
-    
-    parseJSON: function(str) {
+// REFACTORED: Modular utility library with ES6 syntax
+export const VERSION = '2.0.0';
+
+export const dateUtils = {
+    format: (date) => date.toISOString().split('T')[0],
+    parse: (str) => new Date(str),
+    isValid: (date) => date instanceof Date && !isNaN(date)
+};
+
+export const stringUtils = {
+    capitalize: (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase(),
+    truncate: (str, length) => str.length > length ? str.slice(0, length) + '...' : str,
+    slugify: (str) => str.toLowerCase().replace(/\s+/g, '-')
+};
+
+export const validators = {
+    email: (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+    url: (url) => {
         try {
-            return JSON.parse(str);
-        } catch (e) {
-            return null;
+            new URL(url);
+            return true;
+        } catch {
+            return false;
         }
     },
-    
-    validateEmail: function(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    },
-    
-    generateId: function() {
-        return Math.random().toString(36).substr(2, 9);
-    },
-    
-    capitalize: function(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    },
-    
-    debounce: function(func, wait) {
+    phone: (phone) => /^\+?[\d\s-()]+$/.test(phone)
+};
+
+export const objectUtils = {
+    deepClone: (obj) => structuredClone(obj),
+    isEmpty: (obj) => Object.keys(obj).length === 0,
+    merge: (...objects) => Object.assign({}, ...objects),
+    pick: (obj, keys) => keys.reduce((acc, key) => {
+        if (key in obj) acc[key] = obj[key];
+        return acc;
+    }, {})
+};
+
+export const functionUtils = {
+    debounce: (func, wait) => {
         let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
+        return (...args) => {
             clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
+            timeout = setTimeout(() => func(...args), wait);
         };
     },
     
-    throttle: function(func, limit) {
+    throttle: (func, limit) => {
         let inThrottle;
-        return function() {
-            const args = arguments;
-            const context = this;
+        return (...args) => {
             if (!inThrottle) {
-                func.apply(context, args);
+                func(...args);
                 inThrottle = true;
                 setTimeout(() => inThrottle = false, limit);
             }
         };
     },
     
-    deepClone: function(obj) {
-        return JSON.parse(JSON.stringify(obj));
-    },
-    
-    isEmpty: function(obj) {
-        return Object.keys(obj).length === 0;
-    },
-    
-    merge: function(obj1, obj2) {
-        return { ...obj1, ...obj2 };
+    memoize: (func) => {
+        const cache = new Map();
+        return (...args) => {
+            const key = JSON.stringify(args);
+            if (cache.has(key)) return cache.get(key);
+            const result = func(...args);
+            cache.set(key, result);
+            return result;
+        };
     }
 };
 
-module.exports = utils;
+export const generateId = () => crypto.randomUUID();
+
+export default {
+    VERSION,
+    dateUtils,
+    stringUtils,
+    validators,
+    objectUtils,
+    functionUtils,
+    generateId
+};
