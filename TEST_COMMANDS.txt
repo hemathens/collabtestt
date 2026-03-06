@@ -1,0 +1,73 @@
+# Quick Test Commands Reference
+
+## View Repository Structure
+git branch -a                           # See all branches
+git log --all --oneline --graph         # See commit history
+ls -la                                  # See all files
+
+## Test 1: Simple Merge (Easy)
+git checkout feature-a
+git merge feature-b
+# Expected: 5 files with conflicts
+# Files: simple-conflict.js, complex-class.ts, config.json, api-routes.py, styles.css
+
+## Test 2: Refactor Merge (Extreme)
+git checkout main
+git merge refactor
+# Expected: 2 files with MASSIVE conflicts
+# Files: large-file.js, database.sql
+
+## Test 3: Octopus Merge (Hardcore)
+git checkout main
+git merge feature-a feature-b refactor
+# Expected: 7 files with conflicts
+# This is the ultimate test!
+
+## Test 4: Rebase
+git checkout feature-a
+git rebase feature-b
+# Expected: Same conflicts as Test 1, different flow
+
+## Test 5: Cherry-pick
+git checkout main
+git cherry-pick feature-b
+# Expected: Selective conflicts
+
+## Reset to Clean State
+git reset --hard HEAD
+git clean -fd
+git checkout main
+
+## Check Conflict Status
+git status                              # See conflicted files
+git diff                                # See conflict markers
+git diff --name-only --diff-filter=U    # List conflicted files only
+
+## After Resolution
+git add .                               # Stage resolved files
+git commit -m "Resolved conflicts"      # Commit the merge
+git log --graph --oneline               # Verify merge commit
+
+## Abort Merge (if needed)
+git merge --abort                       # Cancel merge
+git rebase --abort                      # Cancel rebase
+
+## Verify Syntax After Resolution
+node simple-conflict.js                 # Test JavaScript
+tsc --noEmit complex-class.ts           # Test TypeScript
+python -m py_compile api-routes.py      # Test Python
+javac nested-logic.java                 # Test Java
+
+## View Specific Conflicts
+git diff feature-a feature-b -- simple-conflict.js
+git diff main refactor -- large-file.js
+
+## Interactive Testing
+bash run-tests.sh                       # Use automated test menu
+
+## Documentation
+cat README.md                           # Main overview
+cat QUICK_START.md                      # Quick start guide
+cat TEST_SCENARIOS.md                   # Detailed scenarios
+cat CONFLICT_MATRIX.md                  # Complete matrix
+cat SUMMARY.md                          # Final summary
